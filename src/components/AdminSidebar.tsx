@@ -41,7 +41,7 @@ const AdminSidebar = () => {
         <div className="flex h-16 items-center justify-between border-b border-border/50 px-4">
           <Link to="/admin" className="flex items-center space-x-2">
             <Code2 className="h-8 w-8 text-primary" />
-            {!collapsed && <span className="text-xl font-display font-bold text-gradient">Admin</span>}
+            {!collapsed && <span className="text-xl font-display font-bold text-gradient">Zencrypt</span>}
           </Link>
           <Button
             variant="ghost"

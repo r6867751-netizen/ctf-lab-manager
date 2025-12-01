@@ -42,7 +42,7 @@ const About = () => {
         <section className="pt-32 pb-20 px-4">
           <div className="container mx-auto max-w-4xl text-center animate-fade-in">
             <h1 className="text-5xl md:text-6xl font-display font-bold mb-6">
-              About <span className="text-gradient">CyberLabs</span>
+              About <span className="text-gradient">Zencrypt</span>
             </h1>
             <p className="text-xl text-muted-foreground leading-relaxed">
               We're on a mission to democratize cybersecurity education through hands-on, practical learning experiences that prepare you for real-world security challenges.
@@ -59,7 +59,7 @@ const About = () => {
                 In today's digital landscape, cybersecurity skills are more critical than ever. Yet traditional education often falls short in providing the practical, hands-on experience needed to excel in this field.
               </p>
               <p className="text-lg text-muted-foreground leading-relaxed mb-4">
-                CyberLabs bridges this gap by offering an immersive learning platform where students, hobbyists, and professionals can develop real security skills through challenging CTF competitions and guided lab exercises.
+                Zencrypt bridges this gap by offering an immersive learning platform where students, hobbyists, and professionals can develop real security skills through challenging CTF competitions and guided lab exercises.
               </p>
               <p className="text-lg text-muted-foreground leading-relaxed">
                 We believe that anyone with curiosity and determination can master cybersecurity. Our platform removes barriers to entry while providing depth for advanced learners.

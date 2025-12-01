@@ -6,7 +6,7 @@ import Footer from "@/components/Footer";
 const Profile = () => {
   const user = {
     name: "CyberHacker",
-    email: "hacker@cyberlabs.com",
+    email: "hacker@zencrypt.com",
     rank: 156,
     points: 2450,
     solvedChallenges: 28,

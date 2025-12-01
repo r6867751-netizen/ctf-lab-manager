@@ -148,7 +148,7 @@ const LabsManagement = () => {
               </div>
               <div>
                 <Label>Docker Image URL</Label>
-                <Input placeholder="docker.io/cyberlabs/..." className="bg-background/50 font-mono" />
+                <Input placeholder="docker.io/zencrypt/..." className="bg-background/50 font-mono" />
               </div>
               <Button type="submit" className="w-full glow-green">Create Lab</Button>
             </form>

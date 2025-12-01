@@ -50,7 +50,7 @@ const Index = () => {
               <div className="mt-12 p-6 rounded-lg border border-border/50 bg-card/50 backdrop-blur-sm animate-fade-in" style={{ animationDelay: "0.8s" }}>
                 <div className="font-mono text-sm text-left overflow-x-auto">
                   <div className="text-muted-foreground mb-2">$ cat flag.txt</div>
-                  <div className="text-primary">flag{"{welcome_to_cyberlabs_start_your_journey}"}</div>
+                  <div className="text-primary">flag{"{welcome_to_zencrypt_start_your_journey}"}</div>
                 </div>
               </div>
             </div>
@@ -62,7 +62,7 @@ const Index = () => {
           <div className="container mx-auto">
             <div className="text-center mb-16">
               <h2 className="text-4xl md:text-5xl font-display font-bold mb-4">
-                Why <span className="text-gradient">CyberLabs?</span>
+                Why <span className="text-gradient">Zencrypt?</span>
               </h2>
               <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
                 Everything you need to become a cybersecurity professional

@@ -25,7 +25,7 @@ const Auth = () => {
 
     toast({
       title: isLogin ? "Logged in successfully!" : "Account created!",
-      description: isLogin ? "Welcome back to CyberLabs" : "Welcome to CyberLabs",
+      description: isLogin ? "Welcome back to Zencrypt" : "Welcome to Zencrypt",
     });
 
     setIsLoading(false);
@@ -44,10 +44,10 @@ const Auth = () => {
         <div className="text-center mb-8">
           <Link to="/" className="flex items-center justify-center space-x-2 mb-4">
             <Code2 className="h-10 w-10 text-primary" />
-            <span className="text-2xl font-display font-bold text-gradient">CyberLabs</span>
+            <span className="text-2xl font-display font-bold text-gradient">Zencrypt</span>
           </Link>
           <h1 className="text-3xl font-display font-bold mb-2">
-            {isLogin ? "Welcome Back" : "Join CyberLabs"}
+            {isLogin ? "Welcome Back" : "Join Zencrypt"}
           </h1>
           <p className="text-muted-foreground">
             {isLogin ? "Login to access challenges and labs" : "Start your security journey today"}

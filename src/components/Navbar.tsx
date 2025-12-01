@@ -36,7 +36,7 @@ const Navbar = ({ isAuthenticated = false }: NavbarProps) => {
               <Code2 className="h-8 w-8 text-primary transition-all duration-300 group-hover:scale-110 group-hover:drop-shadow-[0_0_10px_hsl(142_76%_50%)]" />
               <div className="absolute inset-0 bg-primary/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
             </div>
-            <span className="text-xl font-display font-bold text-gradient">CyberLabs</span>
+            <span className="text-xl font-display font-bold text-gradient">Zencrypt</span>
           </Link>
 
           <div className="hidden md:flex items-center space-x-1">
