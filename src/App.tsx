@@ -11,6 +11,12 @@ import CTF from "./pages/CTF";
 import Labs from "./pages/Labs";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
+import AdminLayout from "./layouts/AdminLayout";
+import Dashboard from "./pages/admin/Dashboard";
+import UsersManagement from "./pages/admin/UsersManagement";
+import ChallengesManagement from "./pages/admin/ChallengesManagement";
+import LabsManagement from "./pages/admin/LabsManagement";
+import Settings from "./pages/admin/Settings";
 
 const queryClient = new QueryClient();
 
@@ -28,6 +34,16 @@ const App = () => (
           <Route path="/ctf" element={<CTF />} />
           <Route path="/labs" element={<Labs />} />
           <Route path="/profile" element={<Profile />} />
+          
+          {/* Admin Routes */}
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<Dashboard />} />
+            <Route path="users" element={<UsersManagement />} />
+            <Route path="challenges" element={<ChallengesManagement />} />
+            <Route path="labs" element={<LabsManagement />} />
+            <Route path="settings" element={<Settings />} />
+          </Route>
+          
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
