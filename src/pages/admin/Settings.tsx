@@ -27,11 +27,11 @@ const Settings = () => {
         <CardContent className="space-y-4">
           <div>
             <Label>Platform Name</Label>
-            <Input defaultValue="CyberLabs" className="bg-background/50" />
+            <Input defaultValue="Zencrypt" className="bg-background/50" />
           </div>
           <div>
             <Label>Support Email</Label>
-            <Input defaultValue="support@cyberlabs.com" className="bg-background/50" />
+            <Input defaultValue="support@zencrypt.com" className="bg-background/50" />
           </div>
           <div>
             <Label>Max Concurrent Lab Sessions</Label>
@@ -78,7 +78,7 @@ const Settings = () => {
         <CardContent className="space-y-4">
           <div>
             <Label>API Base URL</Label>
-            <Input defaultValue="https://api.cyberlabs.com" className="bg-background/50 font-mono" />
+            <Input defaultValue="https://api.zencrypt.com" className="bg-background/50 font-mono" />
           </div>
           <div>
             <Label>JWT Token Expiry (hours)</Label>

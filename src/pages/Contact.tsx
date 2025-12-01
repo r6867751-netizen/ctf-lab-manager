@@ -105,8 +105,8 @@ const Contact = () => {
                     <div>
                       <h3 className="font-display font-semibold mb-2">Email Us</h3>
                       <p className="text-muted-foreground text-sm mb-2">For general inquiries and support</p>
-                      <a href="mailto:support@cyberlabs.com" className="text-primary hover:underline">
-                        support@cyberlabs.com
+                      <a href="mailto:support@zencrypt.com" className="text-primary hover:underline">
+                        support@zencrypt.com
                       </a>
                     </div>
                   </div>

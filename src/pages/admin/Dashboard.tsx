@@ -12,7 +12,7 @@ const recentActivity = [
   { user: "alex_hacker", action: "Solved", target: "SQL Injection 101", time: "2 min ago" },
   { user: "cyber_ninja", action: "Started", target: "Buffer Overflow Lab", time: "5 min ago" },
   { user: "sec_master", action: "Completed", target: "XSS Advanced", time: "12 min ago" },
-  { user: "root_access", action: "Joined", target: "CyberLabs", time: "15 min ago" },
+  { user: "root_access", action: "Joined", target: "Zencrypt", time: "15 min ago" },
 ];
 
 const Dashboard = () => {
@@ -20,7 +20,7 @@ const Dashboard = () => {
     <div className="space-y-8 animate-fade-in">
       <div>
         <h1 className="text-3xl font-display font-bold mb-2">Dashboard</h1>
-        <p className="text-muted-foreground">Overview of your CyberLabs platform</p>
+        <p className="text-muted-foreground">Overview of your Zencrypt platform</p>
       </div>
 
       {/* Stats Grid */}

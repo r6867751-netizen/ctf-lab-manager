@@ -9,7 +9,7 @@ const Footer = () => {
           <div className="space-y-4">
             <div className="flex items-center space-x-2">
               <Code2 className="h-6 w-6 text-primary" />
-              <span className="text-lg font-display font-bold text-gradient">CyberLabs</span>
+              <span className="text-lg font-display font-bold text-gradient">Zencrypt</span>
             </div>
             <p className="text-sm text-muted-foreground">
               Master cybersecurity through hands-on challenges and interactive labs.
@@ -81,7 +81,7 @@ const Footer = () => {
           </div>
         </div>
         <div className="mt-12 pt-8 border-t border-border/50 text-center text-sm text-muted-foreground">
-          <p>&copy; 2024 CyberLabs. All rights reserved.</p>
+          <p>&copy; 2024 Zencrypt. All rights reserved.</p>
         </div>
       </div>
     </footer>
