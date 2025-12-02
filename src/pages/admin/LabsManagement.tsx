@@ -1,5 +1,6 @@
-import { useState } from "react";
-import { Search, Plus, MoreHorizontal, Trash2, Edit, Play, Pause } from "lucide-react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { Search, Plus, MoreHorizontal, Trash2, Edit } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -35,56 +36,112 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 
 interface Lab {
   id: string;
   title: string;
-  category: string;
-  difficulty: "beginner" | "intermediate" | "advanced";
+  description: string;
+  difficulty: string;
   duration: string;
-  activeUsers: number;
-  status: "running" | "stopped";
+  modules: number;
 }
 
-const mockLabs: Lab[] = [
-  { id: "1", title: "Web Application Security", category: "Web", difficulty: "beginner", duration: "2 hours", activeUsers: 45, status: "running" },
-  { id: "2", title: "Network Penetration Testing", category: "Network", difficulty: "intermediate", duration: "4 hours", activeUsers: 23, status: "running" },
-  { id: "3", title: "Malware Analysis Lab", category: "Forensics", difficulty: "advanced", duration: "3 hours", activeUsers: 12, status: "running" },
-  { id: "4", title: "Linux Privilege Escalation", category: "Pwn", difficulty: "intermediate", duration: "2 hours", activeUsers: 0, status: "stopped" },
-  { id: "5", title: "Cloud Security Fundamentals", category: "Cloud", difficulty: "beginner", duration: "1.5 hours", activeUsers: 34, status: "running" },
-];
-
 const LabsManagement = () => {
-  const [labs, setLabs] = useState<Lab[]>(mockLabs);
+  const { isAdmin, loading } = useAuth();
+  const navigate = useNavigate();
+  const [labs, setLabs] = useState<Lab[]>([]);
   const [search, setSearch] = useState("");
   const [isAddOpen, setIsAddOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
 
-  const filteredLabs = labs.filter(
-    (lab) => lab.title.toLowerCase().includes(search.toLowerCase()) ||
-             lab.category.toLowerCase().includes(search.toLowerCase())
-  );
+  // Form state
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [difficulty, setDifficulty] = useState("Beginner");
+  const [duration, setDuration] = useState("");
+  const [modules, setModules] = useState("1");
 
-  const handleDelete = (id: string) => {
-    setLabs(labs.filter((l) => l.id !== id));
-    toast({ title: "Lab deleted" });
+  useEffect(() => {
+    if (!loading && !isAdmin) {
+      navigate("/");
+    }
+  }, [isAdmin, loading, navigate]);
+
+  useEffect(() => {
+    fetchLabs();
+  }, []);
+
+  const fetchLabs = async () => {
+    const { data, error } = await supabase
+      .from('labs')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (!error && data) {
+      setLabs(data);
+    }
+    setIsLoading(false);
   };
 
-  const handleToggleStatus = (id: string) => {
-    setLabs(labs.map((l) =>
-      l.id === id ? { ...l, status: l.status === "running" ? "stopped" : "running", activeUsers: l.status === "running" ? 0 : l.activeUsers } : l
-    ));
-    toast({ title: "Lab status updated" });
+  const filteredLabs = labs.filter(
+    (lab) => lab.title.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const handleCreate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    const { error } = await supabase.from('labs').insert({
+      title,
+      description,
+      difficulty,
+      duration,
+      modules: parseInt(modules),
+    });
+
+    if (error) {
+      toast({ title: "Error creating lab", description: error.message, variant: "destructive" });
+    } else {
+      toast({ title: "Lab created" });
+      setIsAddOpen(false);
+      resetForm();
+      fetchLabs();
+    }
+  };
+
+  const resetForm = () => {
+    setTitle("");
+    setDescription("");
+    setDifficulty("Beginner");
+    setDuration("");
+    setModules("1");
+  };
+
+  const handleDelete = async (id: string) => {
+    const { error } = await supabase.from('labs').delete().eq('id', id);
+    
+    if (error) {
+      toast({ title: "Error deleting lab", variant: "destructive" });
+    } else {
+      setLabs(labs.filter((l) => l.id !== id));
+      toast({ title: "Lab deleted" });
+    }
   };
 
   const getDifficultyBadge = (difficulty: string) => {
     const variants: Record<string, string> = {
-      beginner: "bg-primary/20 text-primary border-primary/30",
-      intermediate: "bg-secondary/20 text-secondary border-secondary/30",
-      advanced: "bg-destructive/20 text-destructive border-destructive/30",
+      Beginner: "bg-primary/20 text-primary border-primary/30",
+      Intermediate: "bg-secondary/20 text-secondary border-secondary/30",
+      Advanced: "bg-destructive/20 text-destructive border-destructive/30",
     };
-    return variants[difficulty];
+    return variants[difficulty] || "bg-muted text-muted-foreground";
   };
+
+  if (loading || isLoading) {
+    return <div className="text-center py-8 text-primary">Loading...</div>;
+  }
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -103,52 +160,63 @@ const LabsManagement = () => {
             <DialogHeader>
               <DialogTitle className="font-display">Add New Lab</DialogTitle>
             </DialogHeader>
-            <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); setIsAddOpen(false); toast({ title: "Lab created" }); }}>
+            <form className="space-y-4" onSubmit={handleCreate}>
               <div>
                 <Label>Title</Label>
-                <Input placeholder="Lab title" className="bg-background/50" />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label>Category</Label>
-                  <Select defaultValue="web">
-                    <SelectTrigger className="bg-background/50">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="web">Web</SelectItem>
-                      <SelectItem value="network">Network</SelectItem>
-                      <SelectItem value="forensics">Forensics</SelectItem>
-                      <SelectItem value="pwn">Pwn</SelectItem>
-                      <SelectItem value="cloud">Cloud</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label>Difficulty</Label>
-                  <Select defaultValue="beginner">
-                    <SelectTrigger className="bg-background/50">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="beginner">Beginner</SelectItem>
-                      <SelectItem value="intermediate">Intermediate</SelectItem>
-                      <SelectItem value="advanced">Advanced</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-              <div>
-                <Label>Duration</Label>
-                <Input placeholder="e.g., 2 hours" className="bg-background/50" />
+                <Input 
+                  placeholder="Lab title" 
+                  className="bg-background/50"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  required
+                />
               </div>
               <div>
                 <Label>Description</Label>
-                <Textarea placeholder="Lab description and learning objectives..." className="bg-background/50 min-h-[100px]" />
+                <Textarea 
+                  placeholder="Lab description and learning objectives..." 
+                  className="bg-background/50 min-h-[100px]"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label>Difficulty</Label>
+                  <Select value={difficulty} onValueChange={setDifficulty}>
+                    <SelectTrigger className="bg-background/50">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Beginner">Beginner</SelectItem>
+                      <SelectItem value="Intermediate">Intermediate</SelectItem>
+                      <SelectItem value="Advanced">Advanced</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label>Duration</Label>
+                  <Input 
+                    placeholder="e.g., 2 hours" 
+                    className="bg-background/50"
+                    value={duration}
+                    onChange={(e) => setDuration(e.target.value)}
+                    required
+                  />
+                </div>
               </div>
               <div>
-                <Label>Docker Image URL</Label>
-                <Input placeholder="docker.io/zencrypt/..." className="bg-background/50 font-mono" />
+                <Label>Number of Modules</Label>
+                <Input 
+                  type="number" 
+                  placeholder="1" 
+                  className="bg-background/50"
+                  value={modules}
+                  onChange={(e) => setModules(e.target.value)}
+                  min="1"
+                  required
+                />
               </div>
               <Button type="submit" className="w-full glow-green">Create Lab</Button>
             </form>
@@ -169,67 +237,52 @@ const LabsManagement = () => {
           </div>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow className="border-border/50">
-                <TableHead>Title</TableHead>
-                <TableHead>Category</TableHead>
-                <TableHead>Difficulty</TableHead>
-                <TableHead>Duration</TableHead>
-                <TableHead>Active Users</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="w-[50px]"></TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredLabs.map((lab) => (
-                <TableRow key={lab.id} className="border-border/30">
-                  <TableCell className="font-medium">{lab.title}</TableCell>
-                  <TableCell>
-                    <Badge variant="outline" className="bg-accent/10 border-accent/30">
-                      {lab.category}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant="outline" className={getDifficultyBadge(lab.difficulty)}>
-                      {lab.difficulty}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-muted-foreground">{lab.duration}</TableCell>
-                  <TableCell className="font-mono text-primary">{lab.activeUsers}</TableCell>
-                  <TableCell>
-                    <Badge variant="outline" className={lab.status === "running" ? "bg-primary/20 text-primary border-primary/30" : "bg-muted/20 text-muted-foreground border-muted/30"}>
-                      {lab.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem>
-                          <Edit className="mr-2 h-4 w-4" /> Edit
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleToggleStatus(lab.id)}>
-                          {lab.status === "running" ? (
-                            <><Pause className="mr-2 h-4 w-4" /> Stop</>
-                          ) : (
-                            <><Play className="mr-2 h-4 w-4" /> Start</>
-                          )}
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleDelete(lab.id)} className="text-destructive">
-                          <Trash2 className="mr-2 h-4 w-4" /> Delete
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
+          {labs.length === 0 ? (
+            <p className="text-center text-muted-foreground py-8">No labs yet. Add your first lab!</p>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow className="border-border/50">
+                  <TableHead>Title</TableHead>
+                  <TableHead>Difficulty</TableHead>
+                  <TableHead>Duration</TableHead>
+                  <TableHead>Modules</TableHead>
+                  <TableHead className="w-[50px]"></TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {filteredLabs.map((lab) => (
+                  <TableRow key={lab.id} className="border-border/30">
+                    <TableCell className="font-medium">{lab.title}</TableCell>
+                    <TableCell>
+                      <Badge variant="outline" className={getDifficultyBadge(lab.difficulty)}>
+                        {lab.difficulty}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-muted-foreground">{lab.duration}</TableCell>
+                    <TableCell className="font-mono text-primary">{lab.modules}</TableCell>
+                    <TableCell>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon">
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem>
+                            <Edit className="mr-2 h-4 w-4" /> Edit
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleDelete(lab.id)} className="text-destructive">
+                            <Trash2 className="mr-2 h-4 w-4" /> Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
         </CardContent>
       </Card>
     </div>
