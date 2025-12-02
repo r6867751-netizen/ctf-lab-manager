@@ -1,15 +1,14 @@
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Code2, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/useAuth";
 
-interface NavbarProps {
-  isAuthenticated?: boolean;
-}
-
-const Navbar = ({ isAuthenticated = false }: NavbarProps) => {
+const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, profile, isAdmin, signOut } = useAuth();
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -25,7 +24,13 @@ const Navbar = ({ isAuthenticated = false }: NavbarProps) => {
     { href: "/profile", label: "Profile" },
   ];
 
-  const links = isAuthenticated ? authLinks : publicLinks;
+  const links = user ? authLinks : publicLinks;
+
+  const handleLogout = async () => {
+    await signOut();
+    navigate("/");
+    setMobileMenuOpen(false);
+  };
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border/50 bg-background/80 backdrop-blur-lg">
@@ -54,7 +59,20 @@ const Navbar = ({ isAuthenticated = false }: NavbarProps) => {
               </Link>
             ))}
 
-            {!isAuthenticated ? (
+            {isAdmin && (
+              <Link
+                to="/admin"
+                className={`inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors h-10 px-4 py-2 ${
+                  location.pathname.startsWith("/admin")
+                    ? "text-primary bg-primary/10"
+                    : "text-foreground/80 hover:bg-primary/10 hover:text-primary"
+                }`}
+              >
+                Admin
+              </Link>
+            )}
+
+            {!user ? (
               <div className="flex items-center space-x-2 ml-4">
                 <Link
                   to="/auth"
@@ -67,12 +85,17 @@ const Navbar = ({ isAuthenticated = false }: NavbarProps) => {
                 </Link>
               </div>
             ) : (
-              <Link
-                to="/"
-                className="ml-4 text-foreground/80 hover:text-destructive px-4 py-2 transition-colors"
-              >
-                Logout
-              </Link>
+              <div className="flex items-center space-x-2 ml-4">
+                <span className="text-sm text-muted-foreground">
+                  {profile?.name || 'User'}
+                </span>
+                <button
+                  onClick={handleLogout}
+                  className="text-foreground/80 hover:text-destructive px-4 py-2 transition-colors"
+                >
+                  Logout
+                </button>
+              </div>
             )}
           </div>
 
@@ -100,7 +123,16 @@ const Navbar = ({ isAuthenticated = false }: NavbarProps) => {
                 {link.label}
               </Link>
             ))}
-            {!isAuthenticated && (
+            {isAdmin && (
+              <Link
+                to="/admin"
+                onClick={() => setMobileMenuOpen(false)}
+                className="inline-flex items-center whitespace-nowrap rounded-md text-sm font-medium transition-colors h-10 px-4 py-2 w-full justify-start text-foreground/80 hover:bg-primary/10 hover:text-primary"
+              >
+                Admin
+              </Link>
+            )}
+            {!user ? (
               <div className="space-y-2 pt-4 border-t border-border/50 flex flex-col">
                 <Link
                   to="/auth"
@@ -112,6 +144,18 @@ const Navbar = ({ isAuthenticated = false }: NavbarProps) => {
                 <Link to="/auth?mode=signup" onClick={() => setMobileMenuOpen(false)}>
                   <Button className="w-full glow-green">Get Started</Button>
                 </Link>
+              </div>
+            ) : (
+              <div className="pt-4 border-t border-border/50">
+                <span className="block px-4 py-2 text-sm text-muted-foreground">
+                  {profile?.name || 'User'}
+                </span>
+                <button
+                  onClick={handleLogout}
+                  className="w-full text-left px-4 py-2 text-sm text-foreground/80 hover:text-destructive transition-colors"
+                >
+                  Logout
+                </button>
               </div>
             )}
           </div>

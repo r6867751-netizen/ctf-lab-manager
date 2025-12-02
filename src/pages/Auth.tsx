@@ -4,33 +4,92 @@ import { Code2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
 
 const Auth = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { signIn, signUp, user, loading } = useAuth();
   const [isLogin, setIsLogin] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   useEffect(() => {
     setIsLogin(searchParams.get("mode") !== "signup");
   }, [searchParams]);
 
+  useEffect(() => {
+    if (user && !loading) {
+      navigate("/ctf");
+    }
+  }, [user, loading, navigate]);
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
 
-    // Simulate API call - Replace with actual Django API call
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-
-    toast({
-      title: isLogin ? "Logged in successfully!" : "Account created!",
-      description: isLogin ? "Welcome back to Zencrypt" : "Welcome to Zencrypt",
-    });
+    try {
+      if (isLogin) {
+        const { error } = await signIn(email, password);
+        if (error) {
+          toast({
+            title: "Login failed",
+            description: error.message,
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            title: "Logged in successfully!",
+            description: "Welcome back to Zencrypt",
+          });
+          navigate("/ctf");
+        }
+      } else {
+        if (!name.trim()) {
+          toast({
+            title: "Name required",
+            description: "Please enter your display name",
+            variant: "destructive",
+          });
+          setIsLoading(false);
+          return;
+        }
+        const { error } = await signUp(email, password, name);
+        if (error) {
+          toast({
+            title: "Signup failed",
+            description: error.message,
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            title: "Account created!",
+            description: "Welcome to Zencrypt",
+          });
+          navigate("/ctf");
+        }
+      }
+    } catch (err: any) {
+      toast({
+        title: "Error",
+        description: err.message || "Something went wrong",
+        variant: "destructive",
+      });
+    }
 
     setIsLoading(false);
-    navigate("/ctf");
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-primary">Loading...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center relative overflow-hidden">
@@ -63,6 +122,9 @@ const Auth = () => {
                   type="text"
                   placeholder="Enter your name"
                   className="bg-background/50"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required={!isLogin}
                 />
               </div>
             )}
@@ -74,6 +136,8 @@ const Auth = () => {
                 placeholder="your@email.com"
                 required
                 className="bg-background/50"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
 
@@ -84,6 +148,9 @@ const Auth = () => {
                 placeholder="••••••••"
                 required
                 className="bg-background/50"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                minLength={6}
               />
             </div>
 
