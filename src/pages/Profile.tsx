@@ -78,7 +78,7 @@ const Profile = () => {
                 <h1 className="text-3xl font-display font-bold mb-1">{profile?.name || 'User'}</h1>
                 <p className="text-muted-foreground mb-4">{profile?.email}</p>
                 <div className="flex flex-wrap justify-center md:justify-start gap-4 text-sm">
-                  <span className="text-muted-foreground">Member since {new Date(user?.created_at || '').toLocaleDateString()}</span>
+                  <span className="text-muted-foreground">Active Member</span>
                 </div>
               </div>
             </div>
