@@ -1,9 +1,10 @@
-import { Shield, Smartphone, Globe, Server, Database, Lock, Code, Bug, FileSearch } from "lucide-react";
+import { Shield, Smartphone, Globe, Server, Database, Lock, Code, Bug, FileSearch, ClipboardList } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import ServiceRequestForm from "@/components/ServiceRequestForm";
 
 const services = [
   {
@@ -78,11 +79,11 @@ const Services = () => {
               and security assessment services to protect your organization from cyber threats.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/contact">
+              <a href="#request-form">
                 <Button size="lg" className="glow-green">
                   Get a Quote
                 </Button>
-              </Link>
+              </a>
               <Link to="/about">
                 <Button size="lg" variant="outline">
                   Learn More
@@ -133,20 +134,44 @@ const Services = () => {
           </div>
         </section>
 
+        {/* Service Request Form Section */}
+        <section id="request-form" className="container mx-auto px-4 mb-20">
+          <div className="relative rounded-2xl border border-border/50 bg-card/30 backdrop-blur-sm p-8 md:p-12 overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-primary/5" />
+            <div className="relative z-10">
+              <div className="text-center mb-10">
+                <div className="inline-flex items-center px-4 py-2 rounded-full border border-primary/30 bg-primary/10 text-primary text-sm font-medium mb-4">
+                  <ClipboardList className="w-4 h-4 mr-2" />
+                  Get a Quote
+                </div>
+                <h2 className="text-2xl md:text-3xl font-display font-bold mb-4">
+                  Request a <span className="text-gradient">Security Assessment</span>
+                </h2>
+                <p className="text-muted-foreground max-w-xl mx-auto">
+                  Fill out the form below and our security experts will get back to you within 24-48 hours.
+                </p>
+              </div>
+              <div className="max-w-2xl mx-auto">
+                <ServiceRequestForm />
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* CTA Section */}
         <section className="container mx-auto px-4">
           <div className="relative rounded-2xl border border-border/50 bg-card/30 backdrop-blur-sm p-8 md:p-12 text-center overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-primary/5" />
             <div className="relative z-10">
               <h2 className="text-2xl md:text-3xl font-display font-bold mb-4">
-                Ready to Secure Your Infrastructure?
+                Have Questions?
               </h2>
               <p className="text-muted-foreground mb-8 max-w-xl mx-auto">
-                Contact us today for a free consultation and learn how we can help protect your organization.
+                Not sure which service is right for you? Contact us for a free consultation.
               </p>
               <Link to="/contact">
                 <Button size="lg" className="glow-green">
-                  Contact Us Today
+                  Contact Us
                 </Button>
               </Link>
             </div>
