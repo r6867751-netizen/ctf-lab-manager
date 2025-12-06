@@ -37,6 +37,13 @@ async function request<T>(
 
 // Auth endpoints
 export const api = {
+  // Generic POST for custom endpoints
+  post: <T>(endpoint: string, data: unknown) =>
+    request<T>(endpoint, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+    
   auth: {
     login: (email: string, password: string) =>
       request<{ token: string; user: User }>('/auth/login', {
